@@ -27,22 +27,28 @@ class ViewModel {
     func getTitles() async {
         
         homeStatus = .fetching
-        
-        do{
-            async let tMovies = dataFetcher.fetchTitles(for:"movie", by: "trending")
-            async let tTV = dataFetcher.fetchTitles(for:"tv", by: "trending")
-            async let tRMovies = try await dataFetcher.fetchTitles(for:"movie", by: "top_rated")
-           async let tRTV = try await dataFetcher.fetchTitles(for:"tv", by: "top_rated")
-           
+        if trendingMovies.isEmpty{
             
-            trendingMovies =  try await tMovies
-            trendingTV = try await tTV
-            topRatedMovies = try await tRMovies
-            topRatedTV = try await tRTV
-            homeStatus = .success
-        } catch {
-            print(error)
-            homeStatus = .failed(underlyingError: error)
+            
+            
+            do{
+                async let tMovies = dataFetcher.fetchTitles(for:"movie", by: "trending")
+                async let tTV = dataFetcher.fetchTitles(for:"tv", by: "trending")
+                async let tRMovies = try await dataFetcher.fetchTitles(for:"movie", by: "top_rated")
+                async let tRTV = try await dataFetcher.fetchTitles(for:"tv", by: "top_rated")
+                
+                
+                trendingMovies =  try await tMovies
+                trendingTV = try await tTV
+                topRatedMovies = try await tRMovies
+                topRatedTV = try await tRTV
+                homeStatus = .success
+            } catch {
+                print(error)
+                homeStatus = .failed(underlyingError: error)
+            }
+        } else {
+                homeStatus = .success
         }
     }
 }
